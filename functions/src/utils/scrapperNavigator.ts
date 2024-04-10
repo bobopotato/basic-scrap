@@ -13,7 +13,7 @@ export const scrapperNavigateTo = async ({ url }: { url: string }) => {
     });
   });
 
-  // Scraping logic here
+  // Scraping logic hereg
   await page.goto(url, { waitUntil: "networkidle2" });
   return page;
   // const data = await page.evaluate(() => {
