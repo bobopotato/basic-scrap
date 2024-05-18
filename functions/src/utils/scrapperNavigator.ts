@@ -1,4 +1,10 @@
 import { getBrowserInstance } from "@libs/scrapper";
+import { USER_AGENT_LIST, POPULAR_WEBSITES } from "@constants/webScraping";
+
+const _getRandomArrayElement = (array: string[]) => {
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
+};
 
 export const scrapperNavigateTo = async ({ url }: { url: string }) => {
   const browser = await getBrowserInstance();
@@ -8,20 +14,20 @@ export const scrapperNavigateTo = async ({ url }: { url: string }) => {
   await page.evaluateOnNewDocument(() => {
     Object.defineProperty(navigator, "userAgent", {
       get() {
-        return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36";
+        return _getRandomArrayElement(USER_AGENT_LIST);
       }
     });
   });
 
-  // Scraping logic hereg
-  await page.goto(url, { waitUntil: "networkidle2" });
+  try {
+    const randomUrl = _getRandomArrayElement(POPULAR_WEBSITES);
+    await page.goto(randomUrl);
+    await page.goto(url, { waitUntil: "networkidle2" });
+  } catch (err) {
+    console.error("Error while navigating to URL:", err);
+    await page.waitForNavigation();
+    await page.reload();
+  }
+
   return page;
-  // const data = await page.evaluate(() => {
-  //   return document.body.innerText;
-  // });
-
-  // console.log("Scraped Data:", data);
-
-  // await browser.close();
-  // return data;
 };
