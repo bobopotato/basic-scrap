@@ -1,12 +1,13 @@
 // const { KnownDevices } = require("puppeteer")
 const puppeteer = require("puppeteer-extra");
 const stealthPlugin = require("puppeteer-extra-plugin-stealth");
+import { Browser } from "puppeteer";
 
 puppeteer.use(stealthPlugin());
 
 puppeteer
   .launch({ headless: false, stealth: true, ignoreHTTPSErrors: true })
-  .then(async (browser: any) => {
+  .then(async (browser: Browser) => {
     const page = await browser.newPage();
 
     // Enabling dynamic User-Agent rotation
@@ -27,8 +28,7 @@ puppeteer
     const data = await page.evaluate(() => {
       return document.body.innerText;
     });
-
+    // page.waitForNetworkIdle
     console.log("Scraped Data:", data);
-
     await browser.close();
   });
